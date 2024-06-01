@@ -127,3 +127,6 @@ Here’s an example of how the pipeline JSON might look:
 This code is a template for an Azure Synapse pipeline that runs the data flow. Adjust it based on your specific configurations and requirements.
 
 By following these steps, you can automate the ingestion of data from the Finnhub API into Azure Synapse Analytics for further analysis and reporting.
+
+Problems faced:
+the output of web activity exceeded 4mb limit so I have to use gzip in header.
