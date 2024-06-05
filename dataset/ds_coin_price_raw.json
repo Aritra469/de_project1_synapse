@@ -1,0 +1,24 @@
+{
+	"name": "ds_coin_price_raw",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('price_',convertFromUtc(utcNow(),'India Standard Time','yyyy-MM-ddTHH-mm-ss'),'.json')",
+					"type": "Expression"
+				},
+				"folderPath": "raw/coinprice",
+				"fileSystem": "storage"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

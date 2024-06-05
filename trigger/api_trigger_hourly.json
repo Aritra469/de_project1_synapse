@@ -1,0 +1,25 @@
+{
+	"name": "api_trigger_hourly",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pl_coin_price_raw",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Hour",
+				"interval": 1,
+				"startTime": "2024-06-04T12:00:00",
+				"endTime": "2024-10-06T06:24:00",
+				"timeZone": "India Standard Time"
+			}
+		}
+	}
+}

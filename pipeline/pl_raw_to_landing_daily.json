@@ -1,0 +1,87 @@
+{
+	"name": "pl_raw_to_landing_daily",
+	"properties": {
+		"activities": [
+			{
+				"name": "merge files to landing",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aaritrammondal469@gmail.com/raw_to_landing_daily"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_azure_db",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "landing to cleansed transformation",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "merge files to landing",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aaritrammondal469@gmail.com/landing_to_cleansed"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_azure_db",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "aggregate tranformation",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "landing to cleansed transformation",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aaritrammondal469@gmail.com/cleansed to aggregate"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_azure_db",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "raw to landing"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-06-03T12:14:32Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

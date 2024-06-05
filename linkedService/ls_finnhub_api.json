@@ -1,0 +1,36 @@
+{
+	"name": "ls_finnhub_api",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://finnhub.io/api/v1",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Basic",
+			"userName": "aaritrammondal469@gmail.com",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "ls_kv",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "website-pwd"
+			},
+			"authHeaders": {
+				"X-Finnhub-Token": {
+					"type": "AzureKeyVaultSecret",
+					"store": {
+						"referenceName": "ls_kv",
+						"type": "LinkedServiceReference"
+					},
+					"secretName": "finnhub-api-key"
+				}
+			}
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

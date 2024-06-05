@@ -1,0 +1,36 @@
+{
+	"name": "ls_coingecko",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum%2Ctether%2Cbinancecoin%2Csolana&vs_currencies=inr&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true&precision=2",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Basic",
+			"userName": "aaritrammondal469@gmail.com",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "ls_kv",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "web-pwd"
+			},
+			"authHeaders": {
+				"x-cg-demo-api-key": {
+					"type": "AzureKeyVaultSecret",
+					"store": {
+						"referenceName": "ls_kv",
+						"type": "LinkedServiceReference"
+					},
+					"secretName": "coingecko-api"
+				}
+			}
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
