@@ -276,7 +276,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/pl_raw_to_landing_daily')]",
+			"name": "[concat(parameters('workspaceName'), '/pl_raw_to_final_daily')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -360,7 +360,7 @@
 					"elapsedTimeMetric": {}
 				},
 				"folder": {
-					"name": "raw to landing"
+					"name": "raw to final"
 				},
 				"annotations": [],
 				"lastPublishTime": "2024-06-03T12:14:32Z"
@@ -666,6 +666,44 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/pipelines/pl_coin_price_raw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/transformation_daily')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_raw_to_final_daily",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2024-06-05T05:41:00",
+						"timeZone": "India Standard Time",
+						"schedule": {
+							"minutes": [
+								0
+							],
+							"hours": [
+								13
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/pl_raw_to_final_daily')]"
 			]
 		},
 		{
