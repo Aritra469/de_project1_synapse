@@ -1,0 +1,36 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "synapse-pratice"
+		},
+		"ls_adls_accountKey": {
+			"value": ""
+		},
+		"synapse-pratice-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:synapse-pratice.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"ls_adls_properties_typeProperties_url": {
+			"value": "https://synapsesa469.dfs.core.windows.net/"
+		},
+		"ls_coingecko_properties_typeProperties_url": {
+			"value": "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum%2Ctether%2Cbinancecoin%2Csolana&vs_currencies=inr&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true&precision=2"
+		},
+		"ls_coingecko_properties_typeProperties_userName": {
+			"value": "aaritrammondal469@gmail.com"
+		},
+		"ls_finnhub_api_properties_typeProperties_url": {
+			"value": "https://finnhub.io/api/v1"
+		},
+		"ls_finnhub_api_properties_typeProperties_userName": {
+			"value": "aaritrammondal469@gmail.com"
+		},
+		"ls_kv_properties_typeProperties_baseUrl": {
+			"value": "https://keystore469.vault.azure.net/"
+		},
+		"synapse-pratice-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://synapsesa469.dfs.core.windows.net"
+		}
+	}
+}
