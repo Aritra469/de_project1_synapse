@@ -1,5 +1,5 @@
 {
-	"name": "pl_raw_to_landing_daily",
+	"name": "pl_raw_to_final_daily",
 	"properties": {
 		"activities": [
 			{
@@ -78,7 +78,7 @@
 			}
 		],
 		"folder": {
-			"name": "raw to landing"
+			"name": "raw to final"
 		},
 		"annotations": [],
 		"lastPublishTime": "2024-06-03T12:14:32Z"
