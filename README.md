@@ -23,8 +23,5 @@
 
 
 
-Problems Faced:
- 1. Due to colon and empty spaces in the uri syntax of the file, there is error during reading.
- 2. 
 
 
