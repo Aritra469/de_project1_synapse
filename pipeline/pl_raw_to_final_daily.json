@@ -75,8 +75,49 @@
 					"referenceName": "ls_azure_db",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "send success mail",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "aggregate tranformation",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": {
+						"value": "https://prod2-24.centralindia.logic.azure.com:443/workflows/fa9356ee22934bf79b89587aaebb5574/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=TK2xe3nWufVP9Qdo2B_U7v23wgVQpUp96D-joxBsufc",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"body": {
+						"value": "{\n    \"message\" : \"This pipeline_id : @{pipeline().RunId} run is successful.\",\n    \"synapseName\" : \"@{pipeline().DataFactory}\", \n    \"pipelineName\" : \"@{pipeline().Pipeline}\", \n    \"receiver\" : \"@{pipeline().parameters.receiver}\"\n   }",
+						"type": "Expression"
+					}
+				}
 			}
 		],
+		"parameters": {
+			"receiver": {
+				"type": "string",
+				"defaultValue": "aaritrammondal469@gmail.com"
+			}
+		},
 		"folder": {
 			"name": "raw to final"
 		},
