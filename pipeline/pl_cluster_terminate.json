@@ -1,0 +1,109 @@
+{
+	"name": "pl_cluster_terminate",
+	"properties": {
+		"activities": [
+			{
+				"name": "db cluster termination",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Set secret value",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Authorization": {
+							"value": "Bearer @{variables('access_token_secret')}",
+							"type": "Expression"
+						}
+					},
+					"url": {
+						"value": "https://adb-4194568812783577.17.azuredatabricks.net/api/2.0/clusters/delete",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"body": {
+						"value": "{\n  \"cluster_id\": \"0603-033006-dcxz9xtq\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "get secret",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "https://keystore469.vault.azure.net/secrets/databricks-access-token/cebba04ba9e34f349fb7134ad3accfc4?api-version=7.0",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": {
+							"value": "https://vault.azure.net",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Set secret value",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "get secret",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "access_token_secret",
+					"value": {
+						"value": "@activity('get secret').output.value",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"access_token_secret": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
