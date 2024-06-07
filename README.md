@@ -23,9 +23,9 @@
 
 
 
-Have to automate the cluster termination process.
-Have to collect pipeline success or error message and visualize using serverless sql.
-Have to move previous months raw data in archive in yyyy/mm/dd or yyyy/mm structure.
+1. Have to automate the cluster termination process.
+2. Have to collect pipeline success or error message and visualize using serverless sql.
+3. Have to move previous months raw data in archive in yyyy/mm/dd or yyyy/mm structure.
 
 
 
