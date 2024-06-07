@@ -236,6 +236,57 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/pl_demo_mail')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "send success mail",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": {
+								"value": "https://prod2-24.centralindia.logic.azure.com:443/workflows/fa9356ee22934bf79b89587aaebb5574/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=TK2xe3nWufVP9Qdo2B_U7v23wgVQpUp96D-joxBsufc",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "{\n    \"message\" : \"This @{pipeline().RunId} run is successful.\",\n    \"synapseName\" : \"@{pipeline().DataFactory}\", \n    \"pipelineName\" : \"@{pipeline().Pipeline}\", \n    \"receiver\" : \"@{pipeline().parameters.receiver}\"\n   }",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"receiver": {
+						"type": "string",
+						"defaultValue": "aaritrammondal469@gmail.com"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/pl_landing_to_cleansed_daily')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -354,10 +405,161 @@
 							"referenceName": "ls_azure_db",
 							"type": "LinkedServiceReference"
 						}
+					},
+					{
+						"name": "send success mail",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "aggregate tranformation",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": {
+								"value": "https://prod2-24.centralindia.logic.azure.com:443/workflows/fa9356ee22934bf79b89587aaebb5574/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=TK2xe3nWufVP9Qdo2B_U7v23wgVQpUp96D-joxBsufc",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "{\n    \"message\" : \"This pipeline_id : @{pipeline().RunId} run is successful.\",\n    \"synapseName\" : \"@{pipeline().DataFactory}\", \n    \"pipelineName\" : \"@{pipeline().Pipeline}\", \n    \"receiver\" : \"@{pipeline().parameters.receiver}\"\n   }",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "db cluster termination",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Set secret value",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Authorization": {
+									"value": "Bearer @{variables('access_token_secret')}",
+									"type": "Expression"
+								}
+							},
+							"url": {
+								"value": "https://adb-4194568812783577.17.azuredatabricks.net/api/2.0/clusters/delete",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "{\n  \"cluster_id\": \"0603-033006-dcxz9xtq\"\n}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "get secret",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "aggregate tranformation",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "https://keystore469.vault.azure.net/secrets/databricks-access-token/cebba04ba9e34f349fb7134ad3accfc4?api-version=7.0",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": {
+									"value": "https://vault.azure.net",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Set secret value",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "get secret",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "access_token_secret",
+							"value": {
+								"value": "@activity('get secret').output.value",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"receiver": {
+						"type": "string",
+						"defaultValue": "aaritrammondal469@gmail.com"
+					}
+				},
+				"variables": {
+					"access_token_secret": {
+						"type": "String"
+					}
 				},
 				"folder": {
 					"name": "raw to final"
@@ -366,7 +568,8 @@
 				"lastPublishTime": "2024-06-03T12:14:32Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/ls_azure_db')]"
+				"[concat(variables('workspaceId'), '/linkedServices/ls_azure_db')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -734,6 +937,201 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/pl_cluster_terminate')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "db cluster termination",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Set secret value",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Authorization": {
+									"value": "Bearer @{variables('access_token_secret')}",
+									"type": "Expression"
+								}
+							},
+							"url": {
+								"value": "https://adb-4194568812783577.17.azuredatabricks.net/api/2.0/clusters/delete",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"body": {
+								"value": "{\n  \"cluster_id\": \"0603-033006-dcxz9xtq\"\n}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "get secret",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "https://keystore469.vault.azure.net/secrets/databricks-access-token/cebba04ba9e34f349fb7134ad3accfc4?api-version=7.0",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": {
+									"value": "https://vault.azure.net",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Set secret value",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "get secret",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "access_token_secret",
+							"value": {
+								"value": "@activity('get secret').output.value",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"access_token_secret": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/pl_get_secrets')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "get secret",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "https://keystore469.vault.azure.net/secrets/databricks-access-token/cebba04ba9e34f349fb7134ad3accfc4?api-version=7.0",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": {
+									"value": "https://vault.azure.net",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "Set secret value",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "get secret",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "secret_value",
+							"value": {
+								"value": "@activity('get secret').output.value",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"secret_value": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
 		}
 	]
 }
