@@ -35,7 +35,7 @@ year/month/day structure in csv format.
 (***json and csv format***)
 
 ### Vizualization:
-    I have used spark SQL to visualize the data and add them to particular dashboards for each coin.
+I have used spark SQL to visualize the data and add them to particular dashboards for each coin.
 
 
 
@@ -43,6 +43,3 @@ year/month/day structure in csv format.
 1. ~~Have to automate the cluster termination process.~~
 2. Have to collect pipeline success or error message and visualize using serverless sql.
 3. Have to move previous months raw data in archive in yyyy/mm/dd or yyyy/mm structure.
-
-
-
