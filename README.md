@@ -30,15 +30,9 @@ day and write it into year/month/day structure using the string.
 
 **landing_to_cleansed** notebook is used to read the merged json file and flatenned it according to our requirements, then writting it into cleansed folder using the same
 year/month/day structure in csv format.
-<img width="934" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/d1406d4e-c11a-4b5c-81b4-c18765c0b02a"><img width="608" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/536c8f48-7593-407c-b8ec-b3c3af49dd20">
+<img width="934" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/d1406d4e-c11a-4b5c-81b4-c18765c0b02a">
+<img width="608" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/536c8f48-7593-407c-b8ec-b3c3af49dd20">
 (***json and csv format***)
-
-
-
-
-
-
-
 
 ### Vizualization:
     I have used spark SQL to visualize the data and add them to particular dashboards for each coin.
