@@ -20,18 +20,19 @@ I have used a schedule trigger to occur hourly.So, I will get hourly current dat
 ### Transformation:
 I have used databricks notebooks for all the transformation.The transformation pipeline looks like this
 <img width="904" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/c254469c-5eda-4565-be38-3be4bdfa9268">
-***pl_raw_to_final_daily***
+(***pl_raw_to_final_daily***)
 
 **raw_to_landing** notebook is used to merge all the previous day's file into a single file and write it into landing folder in year/month/day file structure.To achieve this
 I get the current date first ,then using timedelta() function I get the date of previous day.Then converted it into string and used it for reading files ingested previous
 day and write it into year/month/day structure using the string.
 <img width="760" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/6fd41a66-7f8f-4ed6-8e82-81fb6b82e453">
-(example_of_file_in_landing)
+(***example_of_file_in_landing***)
 
 **landing_to_cleansed** notebook is used to read the merged json file and flatenned it according to our requirements, then writting it into cleansed folder using the same
 year/month/day structure in csv format.
 <img width="934" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/d1406d4e-c11a-4b5c-81b4-c18765c0b02a">
-<img width="608" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/536c8f48-7593-407c-b8ec-b3c3af49dd20">(***json and csv format***)
+<img width="608" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/536c8f48-7593-407c-b8ec-b3c3af49dd20">
+(***json and csv format***)
 
 
 
