@@ -34,11 +34,31 @@ year/month/day structure in csv format.
 <img width="608" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/536c8f48-7593-407c-b8ec-b3c3af49dd20">
 (***json and csv format***)
 
-### Vizualization:
-I have used spark SQL to visualize the data and add them to particular dashboards for each coin.
+**cleansed to aggregate** notebook is used to read data from cleansed folder and do some minimal transformations.All numerical columns have casted from string to decimal
+type and then aggregated to get average.Then I created a function which will check if the file exists or not in output file path.If file exists in output path then the file
+will be read and current aggregated data will be appended on existing file otherwise a new file will be created. Then the combined file will be written in the output path.
+I have written 5 folder for 5 cryptocurrencies using loop.
+<img width="739" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/baca4c7d-3da1-457d-93f8-f7dfbec2800e">
+<img width="929" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/cd2f4c78-b6aa-4acd-bf33-1e9e673d67a3">
+(***aggregated data for binance coin***)
 
 
+### Visualization:
+I have used spark SQL to visualize the data and add them to particular dashboards for each coin.Here is an example
+<img width="960" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/876a5548-d0a4-4eca-bdc2-c5dfadf33b4d">
 
+## Other components:
+### Sending message:
+I have created an web activity to send mail for each successful pipeline runs.This web activity will send a post request to azure logic app with following body
+<img width="960" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/ffc3e94a-4662-4f78-b173-415f2228bed6">
+
+This will trigger the logic app to send mail to recipient.
+<img width="926" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/61247a8b-03aa-4e5d-8133-c585577d395d">
+
+### Auto-terminate cluster:
+As the databricks cluster auto-terminated after 10 mins of inactivity, I want to save cost by immediately terminating the cluster after finishing the etl process.
+<img width="912" alt="image" src="https://github.com/Aritra469/de_project1_synapse/assets/171404393/e8a884ef-c991-4d8f-acd7-3041b6433881">
+First I get the databricks access token from the keyvault using webactivity and then set the activity output as a pipeline variable, then I used the pipeline variable for authorization and send a post request for databricks cluster termination.
 
 1. ~~Have to automate the cluster termination process.~~
 2. Have to collect pipeline success or error message and visualize using serverless sql.
